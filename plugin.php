@@ -1,21 +1,21 @@
 <?php
-use WordPressPluginBoilerplate\Core\Api;
-use WordPressPluginBoilerplate\Admin\Menu;
-use WordPressPluginBoilerplate\Core\Template;
-use WordPressPluginBoilerplate\Assets\Frontend;
-use WordPressPluginBoilerplate\Assets\Admin;
-use WordPressPluginBoilerplate\Traits\Base;
+use WPAIAssistant\Core\Api;
+use WPAIAssistant\Admin\Menu;
+use WPAIAssistant\Core\Template;
+use WPAIAssistant\Assets\Frontend;
+use WPAIAssistant\Assets\Admin;
+use WPAIAssistant\Traits\Base;
 
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Class WordPressPluginBoilerplate
+ * Class WPAIAssistant
  *
  * The main class for the Coldmailar plugin, responsible for initialization and setup.
  *
  * @since 1.0.0
  */
-final class WordPressPluginBoilerplate {
+final class WPAIAssistant {
 
 	use Base;
 
@@ -26,12 +26,12 @@ final class WordPressPluginBoilerplate {
 	 * @return void
 	 */
 	public function __construct() {
-		define( 'WORDPRESS_PLUGIN_BOILERPLATE_VERSION', '1.0.0' );
-		define( 'WORDPRESS_PLUGIN_BOILERPLATE_PLUGIN_FILE', __FILE__ );
-		define( 'WORDPRESS_PLUGIN_BOILERPLATE_DIR', plugin_dir_path( __FILE__ ) );
-		define( 'WORDPRESS_PLUGIN_BOILERPLATE_URL', plugin_dir_url( __FILE__ ) );
-		define( 'WORDPRESS_PLUGIN_BOILERPLATE_ASSETS_URL', WORDPRESS_PLUGIN_BOILERPLATE_URL . '/assets' );
-		define( 'WORDPRESS_PLUGIN_BOILERPLATE_ROUTE_PREFIX', 'wordpress-plugin-boilerplate/v1' );
+		define( 'WPAIA_VERSION', '1.0.0' );
+		define( 'WPAIA_PLUGIN_FILE', __FILE__ );
+		define( 'WPAIA_DIR', plugin_dir_path( __FILE__ ) );
+		define( 'WPAIA_URL', plugin_dir_url( __FILE__ ) );
+		define( 'WPAIA_ASSETS_URL', WPAIA_URL . '/assets' );
+		define( 'WPAIA_ROUTE_PREFIX', 'wordpress-plugin-boilerplate/v1' );
 	}
 
 	/**
@@ -54,11 +54,7 @@ final class WordPressPluginBoilerplate {
 		Template::get_instance()->init();
 
 		add_action( 'init', array( $this, 'i18n' ) );
-		add_action( 'init', array( $this, 'register_blocks' ) );
-	}
-
-	public function register_blocks() {
-		register_block_type( __DIR__ . '/assets/blocks/block-1' );
+		
 	}
 
 
@@ -71,6 +67,6 @@ final class WordPressPluginBoilerplate {
 	 * @return void
 	 */
 	public function i18n() {
-		load_plugin_textdomain( 'wordpress-plugin-boilerplate', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
+		load_plugin_textdomain( 'wp-ai-assistant', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
 	}
 }

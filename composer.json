@@ -3,9 +3,9 @@
   "description": "Wordpress Plugin boilerplate",
   "autoload": {
     "psr-4": {
-      "WordPressPluginBoilerplate\\": "includes/",
-      "WordPressPluginBoilerplate\\Database\\": "database/",
-      "WordPressPluginBoilerplate\\Libs\\": "libs/"
+      "WPAIAssistant\\": "includes/",
+      "WPAIAssistant\\Database\\": "database/",
+      "WPAIAssistant\\Libs\\": "libs/"
     },
     "files": [
       "libs/assets.php",

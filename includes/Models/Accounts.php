@@ -2,22 +2,22 @@
 /**
  * Class Accounts
  *
- * Represents the Accounts model for WordPressPluginBoilerplate.
+ * Represents the Accounts model for WPAIAssistant.
  *
- * @package WordPressPluginBoilerplate\Models
+ * @package WPAIAssistant\Models
  * @since 1.0.0
  */
 
-namespace WordPressPluginBoilerplate\Models;
+namespace WPAIAssistant\Models;
 
 use Prappo\WpEloquent\Database\Eloquent\Model;
 
 /**
  * Class Accounts
  *
- * Represents the Accounts model for WordPressPluginBoilerplate.
+ * Represents the Accounts model for WPAIAssistant.
  *
- * @package WordPressPluginBoilerplate\Models
+ * @package WPAIAssistant\Models
  */
 class Accounts extends Model {
 

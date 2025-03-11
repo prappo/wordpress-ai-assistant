@@ -1,10 +1,10 @@
 <?php
 
-namespace WordPressPluginBoilerplate\Core;
+namespace WPAIAssistant\Core;
 
-use WordPressPluginBoilerplate\Database\Migrations\Accounts;
-use WordPressPluginBoilerplate\Database\Seeders\Accounts as SeedersAccounts;
-use WordPressPluginBoilerplate\Traits\Base;
+use WPAIAssistant\Database\Migrations\Accounts;
+use WPAIAssistant\Database\Seeders\Accounts as SeedersAccounts;
+use WPAIAssistant\Traits\Base;
 
 /**
  * This class is responsible for the functionality
@@ -33,7 +33,7 @@ class Install {
 	 * @return void
 	 */
 	private function install_pages() {
-		wordpress_plugin_boilerplate_install_page(
+		wpaia_install_page(
 			Template::FRONTEND_TEMPLATE_NAME,
 			Template::FRONTEND_TEMPLATE_SLUG,
 			Template::FRONTEND_TEMPLATE

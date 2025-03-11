@@ -2,21 +2,21 @@
 /**
  * Class Users
  *
- * Represents the Users model for WordPressPluginBoilerplate.
+ * Represents the Users model for WPAIAssistant.
  *
- * @package WordPressPluginBoilerplate\Models
+ * @package WPAIAssistant\Models
  */
 
-namespace WordPressPluginBoilerplate\Models;
+namespace WPAIAssistant\Models;
 
 use Prappo\WpEloquent\Database\Eloquent\Model;
 
 /**
  * Class Users
  *
- * Represents the Users model for WordPressPluginBoilerplate.
+ * Represents the Users model for WPAIAssistant.
  *
- * @package WordPressPluginBoilerplate\Models
+ * @package WPAIAssistant\Models
  */
 class Users extends Model {
 

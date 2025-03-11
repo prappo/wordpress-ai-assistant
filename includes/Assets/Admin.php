@@ -2,35 +2,35 @@
 
 declare(strict_types=1);
 
-namespace WordPressPluginBoilerplate\Assets;
+namespace WPAIAssistant\Assets;
 
-use WordPressPluginBoilerplate\Core\Template;
-use WordPressPluginBoilerplate\Traits\Base;
-use WordPressPluginBoilerplate\Libs\Assets;
+use WPAIAssistant\Core\Template;
+use WPAIAssistant\Traits\Base;
+use WPAIAssistant\Libs\Assets;
 
 /**
  * Class Admin
  *
- * Handles admin functionalities for the WordPressPluginBoilerplate.
+ * Handles admin functionalities for the WPAIAssistant.
  *
- * @package WordPressPluginBoilerplate\Admin
+ * @package WPAIAssistant\Admin
  */
 class Admin {
 
 	use Base;
 
 	/**
-	 * Script handle for WordPressPluginBoilerplate.
+	 * Script handle for WPAIAssistant.
 	 */
-	const HANDLE = 'wordpress-plugin-boilerplate';
+	const HANDLE = 'wp-ai-assistant';
 
 	/**
-	 * JS Object name for WordPressPluginBoilerplate.
+	 * JS Object name for WPAIAssistant.
 	 */
-	const OBJ_NAME = 'wordpressPluginBoilerplate';
+	const OBJ_NAME = 'wpAiAssistant';
 
 	/**
-	 * Development script path for WordPressPluginBoilerplate.
+	 * Development script path for WPAIAssistant.
 	 */
 	const DEV_SCRIPT = 'src/admin/main.jsx';
 
@@ -40,7 +40,7 @@ class Admin {
 	 * @var array
 	 */
 	private $allowed_screens = array(
-		'toplevel_page_wordpress-plugin-boilerplate',
+		'toplevel_page_wp-ai-assistant',
 	);
 
 	/**
@@ -74,7 +74,7 @@ class Admin {
 
 		if ( in_array( $current_screen, $this->allowed_screens, true ) ) {
 			Assets\enqueue_asset(
-				WORDPRESS_PLUGIN_BOILERPLATE_DIR . '/assets/admin/dist',
+				WPAIA_DIR . '/assets/admin/dist',
 				self::DEV_SCRIPT,
 				$this->get_config()
 			);
@@ -107,6 +107,7 @@ class Admin {
 			'isAdmin'   => is_admin(),
 			'apiUrl'    => rest_url(),
 			'userInfo'  => $this->get_user_data(),
+			'assetsPublicUrl' => WPAIA_URL . '/assets/public',
 		);
 	}
 

@@ -5,9 +5,9 @@
  * @since 1.0.0
  */
 
-namespace WordPressPluginBoilerplate\Libs\API;
+namespace WPAIAssistant\Libs\API;
 
-use WordPressPluginBoilerplate\Libs\API\ApiRouteException;
+use WPAIAssistant\Libs\API\ApiRouteException;
 
 /**
  * Class ApiConfig

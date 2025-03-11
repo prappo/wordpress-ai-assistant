@@ -7,9 +7,9 @@
  * @since 1.0.0
  */
 
-namespace WordPressPluginBoilerplate\Controllers\Posts;
+namespace WPAIAssistant\Controllers\Posts;
 
-use WordPressPluginBoilerplate\Models\Posts;
+use WPAIAssistant\Models\Posts;
 
 class Actions {
 	public function get_all_posts() {

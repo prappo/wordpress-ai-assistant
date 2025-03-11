@@ -28,17 +28,12 @@ import { clsx } from "clsx";
 
 const navigation = [
     {
-        name: "Dashboard",
-        href: "dashboard",
+        name: "Chat",
+        href: "chat",
         icon: Home,
         current: true,
     },
-    {
-        name: "Inbox",
-        href: "inbox",
-        icon: Mail,
-        current: false,
-    },
+  
 
     {
         name: "Settings",
@@ -55,7 +50,7 @@ const navigation = [
 ];
 
 export default function LayoutOne() {
-    let showApplicationLayout = !wordpressPluginBoilerplate.isAdmin;
+    let showApplicationLayout = !wpAiAssistant.isAdmin;
     let location = useLocation();
     const navigate = useNavigate();
     const pageTitle = location.pathname.split("/")[1];

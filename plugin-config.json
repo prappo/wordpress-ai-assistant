@@ -1,15 +1,15 @@
 {
-    "plugin_name":"WordPress Plugin Boilerplate",
-    "plugin_description":"A boilerplate for WordPress plugins.",
+    "plugin_name":"WordPress AI Assistant",
+    "plugin_description":"A WordPress AI Assistant plugin.",
     "plugin_version":"1.0.0",
-    "plugin_file_name":"wordpress-plugin-boilerplate.php",
+    "plugin_file_name":"wp-ai-assistant.php",
     "author_name":"Prappo",
-    "author_uri":"https://prappo.github.io",
-    "text_domain":"wordpress-plugin-boilerplate",
+    "author_uri":"https://github.com/prappo",
+    "text_domain":"wp-ai-assistant",
     "domain_path":"/languages",
-    "main_class_name":"WordPressPluginBoilerplate",
-    "main_function_name":"wordpress_plugin_boilerplate_init",
-    "namespace":"WordPressPluginBoilerplate",
-    "plugin_prefix":"wpb",
-    "constant_prefix":"WPB"
+    "main_class_name":"WPAIAssistant",
+    "main_function_name":"wp_ai_assistant_init",
+    "namespace":"WPAIAssistant",
+    "plugin_prefix":"wpaia",
+    "constant_prefix":"WPAIA"
 }

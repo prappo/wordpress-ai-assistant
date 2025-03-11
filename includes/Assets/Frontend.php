@@ -2,35 +2,35 @@
 
 declare(strict_types=1);
 
-namespace WordPressPluginBoilerplate\Assets;
+namespace WPAIAssistant\Assets;
 
-use WordPressPluginBoilerplate\Core\Template;
-use WordPressPluginBoilerplate\Traits\Base;
-use WordPressPluginBoilerplate\Libs\Assets;
+use WPAIAssistant\Core\Template;
+use WPAIAssistant\Traits\Base;
+use WPAIAssistant\Libs\Assets;
 
 /**
  * Class Frontend
  *
- * Handles frontend functionalities for the WordPressPluginBoilerplate.
+ * Handles frontend functionalities for the WPAIAssistant.
  *
- * @package WordPressPluginBoilerplate\Assets
+ * @package WPAIAssistant\Assets
  */
 class Frontend {
 
 	use Base;
 
 	/**
-	 * Script handle for WordPressPluginBoilerplate.
+	 * Script handle for WPAIAssistant.
 	 */
-	const HANDLE = 'wordpress-plugin-boilerplate-frontend';
+	const HANDLE = 'wp-ai-assistant-frontend';
 
 	/**
-	 * JS Object name for WordPressPluginBoilerplate.
+	 * JS Object name for WPAIAssistant.
 	 */
-	const OBJ_NAME = 'wordpressPluginBoilerplateFrontend';
+	const OBJ_NAME = 'wpAiAssistantFrontend';
 
 	/**
-	 * Development script path for WordPressPluginBoilerplate.
+	 * Development script path for WPAIAssistant.
 	 */
 	const DEV_SCRIPT = 'src/frontend/main.jsx';
 
@@ -40,7 +40,7 @@ class Frontend {
 	 * @var array
 	 */
 	private $allowed_screens = array(
-		'toplevel_page_wordpress-plugin-boilerplate',
+		'toplevel_page_wp-ai-assistant',
 	);
 
 	/**
@@ -74,7 +74,7 @@ class Frontend {
 
 		if ( in_array( $current_screen, $this->allowed_screens, true ) ) {
 			Assets\enqueue_asset(
-				WORDPRESS_PLUGIN_BOILERPLATE_DIR . '/assets/frontend/dist',
+				WPAIA_DIR . '/assets/frontend/dist',
 				self::DEV_SCRIPT,
 				$this->get_config()
 			);

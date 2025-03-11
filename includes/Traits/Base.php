@@ -1,13 +1,13 @@
 <?php
 
-namespace WordPressPluginBoilerplate\Traits;
+namespace WPAIAssistant\Traits;
 
 /**
  * Trait Base
  *
  * Provides a trait with a singleton pattern for obtaining an instance.
  *
- * @package WordPressPluginBoilerplate\Trait
+ * @package WPAIAssistant\Trait
  */
 trait Base {
 

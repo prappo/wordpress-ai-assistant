@@ -1,13 +1,13 @@
 <?php
 
-namespace WordPressPluginBoilerplate\Controllers\Accounts;
+namespace WPAIAssistant\Controllers\Accounts;
 
 /**
  * Class Messages
  *
  * Provides static methods to generate standardized messages related to accounts actions.
  *
- * @package WordPressPluginBoilerplate\Controllers\Accounts
+ * @package WPAIAssistant\Controllers\Accounts
  */
 class Messages {
 

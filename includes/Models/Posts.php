@@ -1,6 +1,6 @@
 <?php
 
-namespace WordPressPluginBoilerplate\Models;
+namespace WPAIAssistant\Models;
 
 use Prappo\WpEloquent\Database\Eloquent\Model;
 

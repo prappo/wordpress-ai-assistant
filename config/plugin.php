@@ -18,5 +18,5 @@ return array(
 	|
 	*/
 
-	'plugin_name' => 'WordPress Plugin Boilerplate',
+	'plugin_name' => 'WordPress AI Assistant',
 );

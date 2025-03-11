@@ -7,7 +7,7 @@
  * @since 1.0.0
  */
 
-namespace WordPressPluginBoilerplate\Libs\DatabaseConnection;
+namespace WPAIAssistant\Libs\DatabaseConnection;
 
 use Prappo\WpEloquent\Application;
 

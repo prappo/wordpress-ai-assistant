@@ -1,5 +1,5 @@
 <?php
-namespace WordPressPluginBoilerplate\Libs\Utils;
+namespace WPAIAssistant\Libs\Utils;
 
 /**
  * Custom Post Type

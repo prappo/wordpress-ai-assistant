@@ -1,31 +1,31 @@
 <?php
 /**
- * WordPressPluginBoilerplate Routes
+ * WPAIAssistant Routes
  *
- * Defines and registers custom API routes for the WordPressPluginBoilerplate using the Haruncpi\WpApi library.
+ * Defines and registers custom API routes for the WPAIAssistant using the Haruncpi\WpApi library.
  *
- * @package WordPressPluginBoilerplate\Routes
+ * @package WPAIAssistant\Routes
  */
 
-namespace WordPressPluginBoilerplate\Routes;
+namespace WPAIAssistant\Routes;
 
-use WordPressPluginBoilerplate\Libs\API\Route;
+use WPAIAssistant\Libs\API\Route;
 
 Route::prefix(
-	WORDPRESS_PLUGIN_BOILERPLATE_ROUTE_PREFIX,
+	WPAIA_ROUTE_PREFIX,
 	function ( Route $route ) {
 
 		// Define accounts API routes.
 
-		$route->post( '/accounts/create', '\WordPressPluginBoilerplate\Controllers\Accounts\Actions@create' );
-		$route->get( '/accounts/get', '\WordPressPluginBoilerplate\Controllers\Accounts\Actions@get' );
-		$route->post( '/accounts/delete', '\WordPressPluginBoilerplate\Controllers\Accounts\Actions@delete' );
-		$route->post( '/accounts/update', '\WordPressPluginBoilerplate\Controllers\Accounts\Actions@update' );
+		$route->post( '/accounts/create', '\WPAIAssistant\Controllers\Accounts\Actions@create' );
+		$route->get( '/accounts/get', '\WPAIAssistant\Controllers\Accounts\Actions@get' );
+		$route->post( '/accounts/delete', '\WPAIAssistant\Controllers\Accounts\Actions@delete' );
+		$route->post( '/accounts/update', '\WPAIAssistant\Controllers\Accounts\Actions@update' );
 
 		// Posts routes.
-		$route->get( '/posts/get', '\WordPressPluginBoilerplate\Controllers\Posts\Actions@get_all_posts' );
-		$route->get( '/posts/get/{id}', '\WordPressPluginBoilerplate\Controllers\Posts\Actions@get_post' );
+		$route->get( '/posts/get', '\WPAIAssistant\Controllers\Posts\Actions@get_all_posts' );
+		$route->get( '/posts/get/{id}', '\WPAIAssistant\Controllers\Posts\Actions@get_post' );
 		// Allow hooks to add more custom API routes.
-		do_action( 'wordpress_plugin_boilerplate_api', $route );
+		do_action( 'wpaia_api', $route );
 	}
 );
