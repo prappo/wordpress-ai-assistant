@@ -1,0 +1,19 @@
+{
+  "name": "prappo/wordpress-plugin-boilerplate",
+  "description": "Wordpress Plugin boilerplate",
+  "autoload": {
+    "psr-4": {
+      "WordPressPluginBoilerplate\\": "includes/",
+      "WordPressPluginBoilerplate\\Database\\": "database/",
+      "WordPressPluginBoilerplate\\Libs\\": "libs/"
+    },
+    "files": [
+      "libs/assets.php",
+      "libs/db.php",
+      "includes/functions.php"
+    ]
+  },
+  "require": {
+    "prappo/wp-eloquent": "^3.0"
+  }
+}
