@@ -283,13 +283,13 @@ grunt.initConfig({
         main: {
             expand: true,
             src: distFiles,
-            dest: 'release/wordpress-plugin-boilerplate',
+            dest: 'docs/build/plugin/wordpress-ai-assistant',
         },
     },
 
      // Task to delete .js.map files
     clean: {
-        mapFiles: ['release/wordpress-plugin-boilerplate/js/dist/assets/**/*.js.map']
+        mapFiles: ['docs/build/plugin/wordpress-ai-assistant/js/dist/assets/**/*.js.map']
     },
 
     // Task to compress the release directory into a zip file
@@ -297,30 +297,13 @@ grunt.initConfig({
         main: {
             options: {
                 mode: 'zip',
-                archive: `./release/wordpress-plugin-boilerplate.zip`,
+                archive: `./docs/build/plugin/wordpress-ai-assistant.zip`,
             },
             expand: true,
             src: distFiles,
-            dest: '/wordpress-plugin-boilerplate',
+            dest: '/wordpress-ai-assistant',
         },
-        version: {
-            options: {
-                mode: 'zip',
-                archive: `./release/wordpress-plugin-boilerplate-${pkg.version}.zip`,
-            },
-            expand: true,
-            src: distFiles,
-            dest: '/wordpress-plugin-boilerplate',
-        },
-        todocs: {
-            options: {
-                mode: 'zip',
-                archive: `./documentation/public/plugin/wordpress-plugin-boilerplate.zip`,
-            },
-            expand: true,
-            src: distFiles,
-            dest: '/wordpress-plugin-boilerplate',
-        },
+
     },
 });
 
@@ -328,7 +311,7 @@ grunt.initConfig({
 loadGruntTasks(grunt);
 
 // Register 'release' task to copy files and create a zip archive
-grunt.registerTask('release', ['copy:main', 'compress:main', 'compress:version', 'compress:todocs', 'clean:mapFiles']);
+grunt.registerTask('release', ['copy:main', 'compress:main', 'clean:mapFiles']);
 
 grunt.registerTask('rename', [
     'move:rename_plugin_file',
