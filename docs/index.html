@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>WordPress AI Assistant</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <iframe id="wp" style="width: 100%; height: 100vh; border: none;padding: 0;margin: 0;"></iframe>
+    <script type="module">
+        // Use unpkg for convenience
+        import { startPlaygroundWeb } from 'https://playground.wordpress.net/client/index.js';
+
+        const client = await startPlaygroundWeb({
+            iframe: document.getElementById('wp'),
+            remoteUrl: `https://playground.wordpress.net/remote.html`,
+            blueprint: {
+                landingPage: '/wp-admin/admin.php?page=wp-ai-assistant',
+                preferredVersions: {
+                    php: '8.3',
+                    wp: 'latest',
+                },
+                features: {
+                    networking: true,
+                },
+                steps: [
+                    {
+                        step: 'login',
+                        username: 'admin',
+                        password: 'password',
+                    },
+                    {
+                        step: 'installPlugin',
+                        pluginZipFile: {
+                            resource: 'url',
+                            url: 'build/plugin/wordpress-ai-assistant.zip',
+                        },
+                    },
+                ],
+            }
+        });
+        // Let's wait until Playground is fully loaded
+        await client.isReady();
+    </script>
+</body>
+
+</html>
