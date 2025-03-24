@@ -69,7 +69,11 @@ function WpAssistantRuntimeProvider({ children }: { children: ReactNode }) {
         const fetchSettings = async () => {
             try {
                 const baseUrl = window.wpAiAssistant.apiUrl.replace(/\/$/, '');
-                const response = await fetch(`${baseUrl}/wp-ai-assistant/v1/settings/get`);
+                const response = await fetch(`${baseUrl}/wp-ai-assistant/v1/settings/get`, {
+                    headers: {
+                        'X-WP-Nonce': window.wpAiAssistant.nonce
+                    }
+                });
                 if (!response.ok) {
                     throw new Error('Failed to fetch settings');
                 }
@@ -274,7 +278,11 @@ const Chat = () => {
         const fetchSettings = async () => {
             try {
                 const baseUrl = window.wpAiAssistant.apiUrl.replace(/\/$/, '');
-                const response = await fetch(`${baseUrl}/wp-ai-assistant/v1/settings/get`);
+                const response = await fetch(`${baseUrl}/wp-ai-assistant/v1/settings/get`, {
+                    headers: {
+                        'X-WP-Nonce': window.wpAiAssistant.nonce
+                    }
+                });
                 if (!response.ok) {
                     throw new Error('Failed to fetch settings');
                 }
