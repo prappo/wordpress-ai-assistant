@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -7,7 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { toast } from "sonner";
+import { toast, Toaster } from "sonner";
 import * as TabsPrimitive from "@radix-ui/react-tabs";
 import {
   Loader2,
@@ -23,6 +23,14 @@ import {
   Monitor
 } from "lucide-react";
 import * as SelectPrimitive from "@radix-ui/react-select";
+
+declare global {
+  interface Window {
+    wpAiAssistant: {
+      apiUrl: string;
+    };
+  }
+}
 
 interface Provider {
   id: string;
@@ -114,39 +122,40 @@ const providers: Provider[] = [
 
 const SettingsPage: React.FC = () => {
   const [isSaving, setIsSaving] = useState(false);
-  const [apiKeys, setApiKeys] = useState<ApiKeys>(() => {
-    if (typeof window !== 'undefined') {
-      const savedKeys = localStorage.getItem('apiKeys');
-      return savedKeys ? JSON.parse(savedKeys) : {};
-    }
-    return {};
+  const [isLoading, setIsLoading] = useState(true);
+  const [apiKeys, setApiKeys] = useState<ApiKeys>({});
+  const [aiSettings, setAISettings] = useState<AISettings>({
+    systemPrompt: 'You are a helpful AI assistant.',
+    enableAgent: true,
+  });
+  const [preferences, setPreferences] = useState<Preferences>({
+    theme: 'system' as Theme,
   });
 
-  const [aiSettings, setAISettings] = useState<AISettings>(() => {
-    if (typeof window !== 'undefined') {
-      const savedSettings = localStorage.getItem('aiSettings');
-      return savedSettings ? JSON.parse(savedSettings) : {
-        systemPrompt: 'You are a helpful AI assistant.',
-        enableAgent: true,
-      };
-    }
-    return {
-      systemPrompt: 'You are a helpful AI assistant.',
-      enableAgent: true,
-    };
-  });
+  useEffect(() => {
+    fetchSettings();
+  }, []);
 
-  const [preferences, setPreferences] = useState<Preferences>(() => {
-    if (typeof window !== 'undefined') {
-      const savedPreferences = localStorage.getItem('preferences');
-      return savedPreferences ? JSON.parse(savedPreferences) : {
-        theme: 'system' as Theme,
-      };
+  const fetchSettings = async () => {
+    try {
+      const baseUrl = window.wpAiAssistant.apiUrl.replace(/\/$/, ''); // Remove trailing slash if exists
+      const response = await fetch(`${baseUrl}/wp-ai-assistant/v1/settings/get`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch settings');
+      }
+      const data = await response.json();
+      
+      // Update state with fetched data
+      if (data.apiKeys) setApiKeys(data.apiKeys);
+      if (data.aiSettings) setAISettings(data.aiSettings);
+      if (data.preferences) setPreferences(data.preferences);
+    } catch (error) {
+      toast.error('Failed to load settings');
+      console.error('Error fetching settings:', error);
+    } finally {
+      setIsLoading(false);
     }
-    return {
-      theme: 'system' as Theme,
-    };
-  });
+  };
 
   const handleApiKeyChange = (providerId: string, value: string) => {
     setApiKeys(prev => ({ ...prev, [providerId]: value }));
@@ -167,25 +176,39 @@ const SettingsPage: React.FC = () => {
   const handleSave = async () => {
     setIsSaving(true);
     try {
-      // Log all settings in JSON format
-      console.log('Current Settings:', JSON.stringify({
-        apiKeys,
-        aiSettings,
-        preferences
-      }, null, 2));
+      const baseUrl = window.wpAiAssistant.apiUrl.replace(/\/$/, ''); // Remove trailing slash if exists
+      const response = await fetch(`${baseUrl}/wp-ai-assistant/v1/settings/save`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          apiKeys,
+          aiSettings,
+          preferences
+        }),
+      });
 
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('apiKeys', JSON.stringify(apiKeys));
-        localStorage.setItem('aiSettings', JSON.stringify(aiSettings));
-        localStorage.setItem('preferences', JSON.stringify(preferences));
+      if (!response.ok) {
+        throw new Error('Failed to save settings');
       }
+
       toast.success('Settings saved successfully');
     } catch (error) {
       toast.error('Failed to save settings');
+      console.error('Error saving settings:', error);
     } finally {
       setIsSaving(false);
     }
   };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background py-8 flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background py-8">
@@ -346,6 +369,7 @@ const SettingsPage: React.FC = () => {
           </TabsContent>
         </Tabs>
       </div>
+      <Toaster position="top-center" />
     </div>
   );
 };

@@ -31,7 +31,7 @@ final class WPAIAssistant {
 		define( 'WPAIA_DIR', plugin_dir_path( __FILE__ ) );
 		define( 'WPAIA_URL', plugin_dir_url( __FILE__ ) );
 		define( 'WPAIA_ASSETS_URL', WPAIA_URL . '/assets' );
-		define( 'WPAIA_ROUTE_PREFIX', 'wordpress-plugin-boilerplate/v1' );
+		define( 'WPAIA_ROUTE_PREFIX', 'wp-ai-assistant/v1' );
 	}
 
 	/**

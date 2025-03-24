@@ -24,7 +24,7 @@ import { createAnthropic } from '@ai-sdk/anthropic';
 import { createGoogleGenerativeAI } from '@ai-sdk/google';
 import { createGroq } from '@ai-sdk/groq';
 
-import React, { useState, createContext, useContext, ReactNode } from "react";
+import React, { useState, createContext, useContext, ReactNode, useEffect } from "react";
 import { toast, Toaster } from "sonner";
 import type { ChatModelAdapter } from "@assistant-ui/react";
 import { tools } from "@/admin/tools";
@@ -61,8 +61,32 @@ const ModelContext = createContext<ModelContextType>({
 });
 
 function WpAssistantRuntimeProvider({ children }: { children: ReactNode }) {
-    // Get API keys from localStorage
-    const apiKeys = typeof window !== 'undefined' ? JSON.parse(localStorage.getItem('apiKeys') || '{}') : {};
+    const [apiKeys, setApiKeys] = useState<Record<string, string>>({});
+    const [isLoading, setIsLoading] = useState(true);
+
+    // Fetch API keys from WordPress settings
+    useEffect(() => {
+        const fetchSettings = async () => {
+            try {
+                const baseUrl = window.wpAiAssistant.apiUrl.replace(/\/$/, '');
+                const response = await fetch(`${baseUrl}/wp-ai-assistant/v1/settings/get`);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch settings');
+                }
+                const data = await response.json();
+                if (data.apiKeys) {
+                    setApiKeys(data.apiKeys);
+                }
+            } catch (error) {
+                console.error('Error fetching settings:', error);
+                toast.error('Failed to load API keys');
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchSettings();
+    }, []);
 
     // Get the selected model from context
     const { selectedModel } = useContext(ModelContext);
@@ -241,11 +265,36 @@ const Chat = () => {
         return savedModel !== null ? savedModel : 'gpt-4o-mini';
     });
 
-    // Update localStorage when model changes
-    const handleModelChange = async (model: string) => {
-        // Get API keys from localStorage
-        const apiKeys = JSON.parse(localStorage.getItem('apiKeys') || '{}');
+    // Initialize API keys state
+    const [apiKeys, setApiKeys] = useState<Record<string, string>>({});
+    const [isLoading, setIsLoading] = useState(true);
 
+    // Fetch settings when component mounts
+    useEffect(() => {
+        const fetchSettings = async () => {
+            try {
+                const baseUrl = window.wpAiAssistant.apiUrl.replace(/\/$/, '');
+                const response = await fetch(`${baseUrl}/wp-ai-assistant/v1/settings/get`);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch settings');
+                }
+                const data = await response.json();
+                if (data.apiKeys) {
+                    setApiKeys(data.apiKeys);
+                }
+            } catch (error) {
+                console.error('Error fetching settings:', error);
+                toast.error('Failed to load API keys');
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchSettings();
+    }, []);
+
+    // Update model selection
+    const handleModelChange = async (model: string) => {
         // Get the provider from the selected model
         const provider = models.find(m => m.id === model)?.provider.toLowerCase();
 
@@ -272,7 +321,6 @@ const Chat = () => {
 
                 // Update the model immediately to provide faster feedback
                 setSelectedModel(model);
-                localStorage.setItem('selectedModel', model);
 
                 // Test API key in background
                 const testModel = openai('gpt-3.5-turbo');
@@ -283,15 +331,13 @@ const Chat = () => {
             } else {
                 // For other providers, just update the model
                 setSelectedModel(model);
-                localStorage.setItem('selectedModel', model);
             }
 
             toast.success(`Switched to ${models.find(m => m.id === model)?.name}`);
         } catch (error: any) {
             console.error('API key test failed:', error);
             // Revert to previous model if there's an error
-            const previousModel = localStorage.getItem('selectedModel') || 'gpt-4o-mini';
-            setSelectedModel(previousModel);
+            setSelectedModel(selectedModel);
 
             if (error?.message?.includes('401')) {
                 toast.error('Invalid API key. Please check your API key in settings.');

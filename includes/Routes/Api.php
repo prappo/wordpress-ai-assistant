@@ -15,12 +15,9 @@ Route::prefix(
 	WPAIA_ROUTE_PREFIX,
 	function ( Route $route ) {
 
-		// Define accounts API routes.
-
-		$route->post( '/accounts/create', '\WPAIAssistant\Controllers\Accounts\Actions@create' );
-		$route->get( '/accounts/get', '\WPAIAssistant\Controllers\Accounts\Actions@get' );
-		$route->post( '/accounts/delete', '\WPAIAssistant\Controllers\Accounts\Actions@delete' );
-		$route->post( '/accounts/update', '\WPAIAssistant\Controllers\Accounts\Actions@update' );
+		// Settings routes.
+		$route->post( '/settings/save', '\WPAIAssistant\Controllers\Settings\Actions@save' );
+		$route->get( '/settings/get', '\WPAIAssistant\Controllers\Settings\Actions@get' );
 
 		// Posts routes.
 		$route->get( '/posts/get', '\WPAIAssistant\Controllers\Posts\Actions@get_all_posts' );
