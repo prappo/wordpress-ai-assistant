@@ -25,4 +25,29 @@ Route::prefix(
 		// Allow hooks to add more custom API routes.
 		do_action( 'wpaia_api', $route );
 	}
+)->auth(
+	function () {
+		// Check if user is logged in
+		if (!is_user_logged_in()) {
+			return false;
+		}
+
+		// Get current user
+		$user = wp_get_current_user();
+		
+		// Check if user has manage_options capability
+		if (!$user || !$user->has_cap('manage_options')) {
+			return false;
+		}
+
+		// Verify nonce for POST requests
+		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+			$nonce = isset($_SERVER['HTTP_X_WP_NONCE']) ? $_SERVER['HTTP_X_WP_NONCE'] : '';
+			if (!wp_verify_nonce($nonce, 'wp_rest')) {
+				return false;
+			}
+		}
+
+		return true;
+	}
 );

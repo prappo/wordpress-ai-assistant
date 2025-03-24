@@ -28,6 +28,7 @@ declare global {
   interface Window {
     wpAiAssistant: {
       apiUrl: string;
+      nonce: string;
     };
   }
 }
@@ -139,7 +140,11 @@ const SettingsPage: React.FC = () => {
   const fetchSettings = async () => {
     try {
       const baseUrl = window.wpAiAssistant.apiUrl.replace(/\/$/, ''); // Remove trailing slash if exists
-      const response = await fetch(`${baseUrl}/wp-ai-assistant/v1/settings/get`);
+      const response = await fetch(`${baseUrl}/wp-ai-assistant/v1/settings/get`, {
+        headers: {
+          'X-WP-Nonce': window.wpAiAssistant.nonce
+        }
+      });
       if (!response.ok) {
         throw new Error('Failed to fetch settings');
       }
@@ -181,6 +186,7 @@ const SettingsPage: React.FC = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'X-WP-Nonce': window.wpAiAssistant.nonce
         },
         body: JSON.stringify({
           apiKeys,
