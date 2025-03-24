@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast, Toaster } from "sonner";
 import * as TabsPrimitive from "@radix-ui/react-tabs";
+import { useTheme } from "@/components/theme-provider";
 import {
   Loader2,
   Sun,
@@ -132,6 +133,7 @@ const SettingsPage: React.FC = () => {
   const [preferences, setPreferences] = useState<Preferences>({
     theme: 'system' as Theme,
   });
+  const { theme: currentTheme, setTheme } = useTheme();
 
   useEffect(() => {
     fetchSettings();
@@ -176,6 +178,7 @@ const SettingsPage: React.FC = () => {
 
   const handleThemeChange = (value: 'light' | 'dark' | 'system') => {
     handlePreferencesChange('theme', value);
+    setTheme(value);
   };
 
   const handleSave = async () => {
