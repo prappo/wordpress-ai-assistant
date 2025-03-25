@@ -5,3 +5,10 @@
 </p>
 
 <img src="docs/screenshots/wordpress-assistant-chat.png" />
+
+## Features
+### Multiple AI model
+
+| You can use multiple AI model to generate your contents    | <img src="docs/screenshots/models.png" /> |
+| -------- | ------- |
+
