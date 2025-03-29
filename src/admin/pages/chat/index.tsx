@@ -35,6 +35,7 @@ import { toolsUI } from "@/admin/tools";
 
 import { models } from "@/components/models";
 import { z } from "zod";
+import { useModelInstance } from "@/contexts/ModelInstanceContext";
 
 interface ModelContextType {
     selectedModel: string;
@@ -64,14 +65,14 @@ const ModelContext = createContext<ModelContextType>({
 });
 
 function WpAssistantRuntimeProvider({ children }: { children: ReactNode }) {
-    const [apiKeys, setApiKeys] = useState<Record<string, string>>({});
+    const { getModelInstance, selectedModel, apiKeys } = useModelInstance();
     const [aiSettings, setAISettings] = useState<{ systemPrompt: string; enableAgent: boolean }>({
         systemPrompt: 'You are a helpful AI assistant.',
         enableAgent: true
     });
     const [isLoading, setIsLoading] = useState(true);
 
-    // Fetch API keys from WordPress settings
+    // Fetch AI settings from WordPress settings
     useEffect(() => {
         const fetchSettings = async () => {
             try {
@@ -85,9 +86,6 @@ function WpAssistantRuntimeProvider({ children }: { children: ReactNode }) {
                     throw new Error('Failed to fetch settings');
                 }
                 const data = await response.json();
-                if (data.apiKeys) {
-                    setApiKeys(data.apiKeys);
-                }
                 if (data.aiSettings) {
                     setAISettings(data.aiSettings);
                 }
@@ -102,58 +100,9 @@ function WpAssistantRuntimeProvider({ children }: { children: ReactNode }) {
         fetchSettings();
     }, []);
 
-    // Get the selected model from context
-    const { selectedModel } = useContext(ModelContext);
-
     // Find the selected model's provider
     const selectedModelInfo = models.find(m => m.id === selectedModel);
     const provider = selectedModelInfo?.provider.toLowerCase() || 'openai';
-
-    // Initialize AI clients
-    const openai = createOpenAI({
-        apiKey: apiKeys.openai || ''
-    });
-
-    const anthropic = createAnthropic({
-        apiKey: apiKeys.anthropic || ''
-    });
-
-    const google = createGoogleGenerativeAI({
-        apiKey: apiKeys.google || ''
-    });
-
-    const openrouter = createOpenRouter({
-        apiKey: apiKeys.openrouter || ''
-    });
-
-    // Get the appropriate model instance based on provider
-    const getModelInstance = () => {
-        switch (provider) {
-            case 'openai':
-                return openai(selectedModel);
-            case 'anthropic':
-                return anthropic(selectedModel);
-            case 'google':
-                return google(selectedModel);
-            case 'groq':
-                // Initialize Groq client with their API
-                const groq = createGroq({
-                    apiKey: apiKeys.groq || '',
-                });
-                return groq(selectedModel);
-            case 'deepseek':
-                // Initialize DeepSeek client with their API
-                const deepseek = createOpenAI({
-                    apiKey: apiKeys.deepseek || '',
-                    baseURL: 'https://api.deepseek.com/v1'
-                });
-                return deepseek(selectedModel);
-            case 'openrouter':
-                return openrouter(selectedModel);
-            default:
-                return openai(selectedModel);
-        }
-    };
 
     const model = getModelInstance();
 
@@ -185,7 +134,6 @@ function WpAssistantRuntimeProvider({ children }: { children: ReactNode }) {
 
                 let text = "";
                 for await (const chunk of result.textStream) {
-
                     text += chunk;
                     yield {
                         content: [{
@@ -195,22 +143,19 @@ function WpAssistantRuntimeProvider({ children }: { children: ReactNode }) {
                     };
                 }
 
-                console.log('messages', messages);
-
                 // Handle tool calls after the text generation is complete
                 const toolCalls = await result.toolCalls;
-
 
                 if (toolCalls && toolCalls.length > 0) {
                     for (const toolCall of toolCalls) {
                         if (toolCall.type === "tool-call") {
-                            console.log(toolCall)
                             yield {
                                 content: [{
                                     type: "tool-call",
                                     toolName: toolCall.toolName,
                                     toolCallId: toolCall.toolCallId,
                                     args: toolCall.args,
+                                    argsText: JSON.stringify(toolCall.args)
                                 }],
                             };
                         }
@@ -246,12 +191,10 @@ function WpAssistantRuntimeProvider({ children }: { children: ReactNode }) {
 
     const runtime = useLocalRuntime(WPAssistantModelAdapter, {
         adapters: {
-
             attachments: new CompositeAttachmentAdapter([
                 new SimpleImageAttachmentAdapter(),
                 new SimpleTextAttachmentAdapter(),
             ]),
-
         }
     });
 
@@ -269,130 +212,7 @@ const Chat = () => {
         return savedState !== null ? JSON.parse(savedState) : false;
     });
 
-    // Initialize model selection state and provide it through context
-    const [selectedModel, setSelectedModel] = useState(() => {
-        // Try to get the saved model from localStorage, default to 'gpt-4o-mini'
-        const savedModel = localStorage.getItem('selectedModel');
-        console.log('Loading saved model from localStorage:', savedModel);
-        return savedModel || 'gpt-4o-mini';
-    });
-
-    // Initialize API keys state
-    const [apiKeys, setApiKeys] = useState<Record<string, string>>({});
-    const [aiSettings, setAISettings] = useState<{ systemPrompt: string; enableAgent: boolean }>({
-        systemPrompt: 'You are a helpful AI assistant.',
-        enableAgent: true
-    });
-    const [isLoading, setIsLoading] = useState(true);
-
-    // Fetch settings when component mounts
-    useEffect(() => {
-        const fetchSettings = async () => {
-            try {
-                const baseUrl = window.wpAiAssistant.apiUrl.replace(/\/$/, '');
-                const response = await fetch(`${baseUrl}/wp-ai-assistant/v1/settings/get`, {
-                    headers: {
-                        'X-WP-Nonce': window.wpAiAssistant.nonce
-                    }
-                });
-                if (!response.ok) {
-                    throw new Error('Failed to fetch settings');
-                }
-                const data = await response.json();
-                if (data.apiKeys) {
-                    setApiKeys(data.apiKeys);
-                }
-                if (data.aiSettings) {
-                    setAISettings(data.aiSettings);
-                }
-            } catch (error) {
-                console.error('Error fetching settings:', error);
-                toast.error('Failed to load settings');
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
-        fetchSettings();
-    }, []);
-
-    // Update model selection
-    const handleModelChange = async (model: string) => {
-        console.log('handleModelChange called with model:', model);
-        
-        // Get the provider from the selected model
-        const provider = models.find(m => m.id === model)?.provider.toLowerCase();
-
-        if (!provider) {
-            toast.error('Invalid model selection');
-            return;
-        }
-
-        // Convert provider name to API key name in storage
-        const apiKeyName = provider === 'openai' ? 'openai' : provider.toLowerCase();
-
-        // Check if API key exists for the provider
-        if (!apiKeys[apiKeyName]) {
-            toast.error(`Please add your ${provider} API key in the settings first.`);
-            return;
-        }
-
-        try {
-            // For OpenAI models, test the API key
-            if (provider === 'openai') {
-                const openai = createOpenAI({
-                    apiKey: apiKeys.openai
-                });
-
-                // Update the model immediately to provide faster feedback
-                setSelectedModel(model);
-                localStorage.setItem('selectedModel', model);
-                console.log('Saved OpenAI model to localStorage:', model);
-
-                // Test API key in background
-                const testModel = openai('gpt-3.5-turbo');
-                await streamText({
-                    model: testModel,
-                    messages: [{ role: 'user', content: 'test' }],
-                });
-            } else {
-                // For other providers, just update the model
-                setSelectedModel(model);
-                localStorage.setItem('selectedModel', model);
-                console.log('Saved non-OpenAI model to localStorage:', model);
-            }
-
-            // Get the model name for the success message
-            const modelName = models.find(m => m.id === model)?.name;
-            toast.success(`Switched to ${modelName}`);
-        } catch (error: any) {
-            console.error('API key test failed:', error);
-            // Revert to previous model if there's an error
-            setSelectedModel(selectedModel);
-            localStorage.setItem('selectedModel', selectedModel);
-            console.log('Reverted model in localStorage:', selectedModel);
-
-            if (error?.message?.includes('401')) {
-                toast.error('Invalid API key. Please check your API key in settings.');
-            } else {
-                toast.error('Failed to connect to the API. Please check your internet connection.');
-            }
-        }
-    };
-
-    // Create a memoized context value to prevent unnecessary re-renders
-    const contextValue = React.useMemo(() => ({
-        selectedModel,
-        setSelectedModel: handleModelChange
-    }), [selectedModel]);
-
-    // Add effect to sync localStorage with selectedModel
-    useEffect(() => {
-        const currentSavedModel = localStorage.getItem('selectedModel');
-        if (currentSavedModel && currentSavedModel !== selectedModel) {
-            setSelectedModel(currentSavedModel);
-        }
-    }, []);
+    const { selectedModel, setSelectedModel } = useModelInstance();
 
     const toggleSidebar = () => {
         const newState = !sidebarVisible;
@@ -408,7 +228,7 @@ const Chat = () => {
     };
 
     return (
-        <ModelContext.Provider value={contextValue}>
+        <ModelContext.Provider value={{ selectedModel, setSelectedModel }}>
             <WpAssistantRuntimeProvider>
                 <div className="flex h-[89vh] m-0 p-0 overflow-hidden">
                     {/* ThreadList sidebar */}
@@ -483,7 +303,7 @@ const Chat = () => {
                                                         {providerModels.map((model) => (
                                                             <DropdownMenuItem
                                                                 key={model.id}
-                                                                onSelect={() => handleModelChange(model.id)}
+                                                                onSelect={() => setSelectedModel(model.id)}
                                                                 className="flex items-start gap-3 py-2"
                                                             >
                                                                 <div className="flex items-start gap-3 text-muted-foreground">

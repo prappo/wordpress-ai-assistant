@@ -4,13 +4,18 @@ import "./index.css";
 import { RouterProvider } from "react-router-dom";
 import { router } from "./routes";
 import { ThemeProvider } from "@/components/theme-provider"
+import { ModelInstanceProvider } from "@/contexts/ModelInstanceContext";
+
 const el = document.getElementById("myplugin");
 
 if (el) {
   ReactDOM.createRoot(el).render(
     <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
-    <React.StrictMode>
-      <RouterProvider router={router} />
-    </React.StrictMode></ThemeProvider>,
+      <ModelInstanceProvider>
+        <React.StrictMode>
+          <RouterProvider router={router} />
+        </React.StrictMode>
+      </ModelInstanceProvider>
+    </ThemeProvider>,
   );
 }
