@@ -157,7 +157,7 @@ function WpAssistantRuntimeProvider({ children }: { children: ReactNode }) {
 
     const model = getModelInstance();
 
-    const MyModelAdapter: ChatModelAdapter = {
+    const WPAssistantModelAdapter: ChatModelAdapter = {
         async *run({ messages, abortSignal }) {
             // If no API key is set, return an error message
             if (!apiKeys[provider]) {
@@ -244,7 +244,7 @@ function WpAssistantRuntimeProvider({ children }: { children: ReactNode }) {
         }
     };
 
-    const runtime = useLocalRuntime(MyModelAdapter, {
+    const runtime = useLocalRuntime(WPAssistantModelAdapter, {
         adapters: {
 
             attachments: new CompositeAttachmentAdapter([
