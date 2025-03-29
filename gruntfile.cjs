@@ -58,6 +58,10 @@ const distFiles = [
     '!js/dist/assets/**/*.js.map',
     '!assets/admin/dist/**/*.js.map',
     '!assets/frontend/dist/**/*.js.map',
+    '!next.config.js',
+    '!postcss.config.js',
+    '!vite.admin.config.js',
+    '!vite.frontend.config.js',
 ];
 
 // Replace functionality

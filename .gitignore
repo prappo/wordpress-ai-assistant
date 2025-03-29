@@ -30,3 +30,4 @@ composer.lock
 *.sw?
 
 /vendor/
+docs/build/plugin/wordpress-ai-assistant
