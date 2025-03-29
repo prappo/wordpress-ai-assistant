@@ -65,6 +65,10 @@ const ModelContext = createContext<ModelContextType>({
 
 function WpAssistantRuntimeProvider({ children }: { children: ReactNode }) {
     const [apiKeys, setApiKeys] = useState<Record<string, string>>({});
+    const [aiSettings, setAISettings] = useState<{ systemPrompt: string; enableAgent: boolean }>({
+        systemPrompt: 'You are a helpful AI assistant.',
+        enableAgent: true
+    });
     const [isLoading, setIsLoading] = useState(true);
 
     // Fetch API keys from WordPress settings
@@ -84,9 +88,12 @@ function WpAssistantRuntimeProvider({ children }: { children: ReactNode }) {
                 if (data.apiKeys) {
                     setApiKeys(data.apiKeys);
                 }
+                if (data.aiSettings) {
+                    setAISettings(data.aiSettings);
+                }
             } catch (error) {
                 console.error('Error fetching settings:', error);
-                toast.error('Failed to load API keys');
+                toast.error('Failed to load settings');
             } finally {
                 setIsLoading(false);
             }
@@ -152,8 +159,6 @@ function WpAssistantRuntimeProvider({ children }: { children: ReactNode }) {
 
     const MyModelAdapter: ChatModelAdapter = {
         async *run({ messages, abortSignal }) {
-            // let { messages, abortSignal } = options;
-
             // If no API key is set, return an error message
             if (!apiKeys[provider]) {
                 toast.error(`${selectedModelInfo?.provider} API key is not set. Please add it in the settings.`);
@@ -165,23 +170,13 @@ function WpAssistantRuntimeProvider({ children }: { children: ReactNode }) {
                 };
                 return;
             }
-
-            // Filter out tool-call messages and format messages for the API
-            // const formattedMessages = (messages as ThreadMessage[]).filter(message => 
-            //     message.content[0]?.type !== "tool-call"
-            // ).map(message => ({
-            //     role: message.role,
-            //     content: (message.content[0] as TextContentPart)?.text || ''
-            // }));
-
-            // messages = messages.filter(message => message.content[0].type !== "tool-call");
             
             try {
                 const config = {
                     model: model,
                     messages: messages,
                     tools: tools,
-                    // system: 'You are a helpful assistant that can answer questions and help with tasks.',
+                    system: aiSettings.systemPrompt,
                     toolChoice: "auto",
                     signal: abortSignal
                 };
@@ -284,6 +279,10 @@ const Chat = () => {
 
     // Initialize API keys state
     const [apiKeys, setApiKeys] = useState<Record<string, string>>({});
+    const [aiSettings, setAISettings] = useState<{ systemPrompt: string; enableAgent: boolean }>({
+        systemPrompt: 'You are a helpful AI assistant.',
+        enableAgent: true
+    });
     const [isLoading, setIsLoading] = useState(true);
 
     // Fetch settings when component mounts
@@ -303,9 +302,12 @@ const Chat = () => {
                 if (data.apiKeys) {
                     setApiKeys(data.apiKeys);
                 }
+                if (data.aiSettings) {
+                    setAISettings(data.aiSettings);
+                }
             } catch (error) {
                 console.error('Error fetching settings:', error);
-                toast.error('Failed to load API keys');
+                toast.error('Failed to load settings');
             } finally {
                 setIsLoading(false);
             }
