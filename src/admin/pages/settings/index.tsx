@@ -75,6 +75,18 @@ const providers: Provider[] = [
     ),
   },
   {
+    id: 'openrouter',
+    name: 'OpenRouter',
+    description: 'Enter your OpenRouter API key to access multiple AI models',
+    icon: (
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="none">
+        <path d="M0 8C0 3.58172 3.58172 0 8 0C12.4183 0 16 3.58172 16 8C16 12.4183 12.4183 16 8 16C3.58172 16 0 12.4183 0 8Z" fill="#4A90E2"/>
+        <path d="M8 4C5.79086 4 4 5.79086 4 8C4 10.2091 5.79086 12 8 12C10.2091 12 12 10.2091 12 8C12 5.79086 10.2091 4 8 4ZM8 10.5C6.34315 10.5 5 9.15685 5 7.5C5 5.84315 6.34315 4.5 8 4.5C9.65685 4.5 11 5.84315 11 7.5C11 9.15685 9.65685 10.5 8 10.5Z" fill="white"/>
+        <path d="M8 6C7.44772 6 7 6.44772 7 7C7 7.55228 7.44772 8 8 8C8.55228 8 9 7.55228 9 7C9 6.44772 8.55228 6 8 6Z" fill="white"/>
+      </svg>
+    ),
+  },
+  {
     id: 'groq',
     name: 'Groq',
     description: 'Enter your Groq API key to use Groq models',

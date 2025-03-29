@@ -19,10 +19,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 import { streamText } from "ai";
-import { createOpenAI } from "@ai-sdk/openai";
+import { createOpenAI } from '@ai-sdk/openai';
 import { createAnthropic } from '@ai-sdk/anthropic';
 import { createGoogleGenerativeAI } from '@ai-sdk/google';
 import { createGroq } from '@ai-sdk/groq';
+import { createOpenRouter } from '@openrouter/ai-sdk-provider';
 
 import React, { useState, createContext, useContext, ReactNode, useEffect } from "react";
 import { toast, Toaster } from "sonner";
@@ -112,6 +113,10 @@ function WpAssistantRuntimeProvider({ children }: { children: ReactNode }) {
         apiKey: apiKeys.google || ''
     });
 
+    const openrouter = createOpenRouter({
+        apiKey: apiKeys.openrouter || ''
+    });
+
     // Get the appropriate model instance based on provider
     const getModelInstance = () => {
         switch (provider) {
@@ -134,6 +139,8 @@ function WpAssistantRuntimeProvider({ children }: { children: ReactNode }) {
                     baseURL: 'https://api.deepseek.com/v1'
                 });
                 return deepseek(selectedModel);
+            case 'openrouter':
+                return openrouter(selectedModel);
             default:
                 return openai(selectedModel);
         }
