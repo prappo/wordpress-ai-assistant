@@ -273,7 +273,8 @@ const Chat = () => {
     const [selectedModel, setSelectedModel] = useState(() => {
         // Try to get the saved model from localStorage, default to 'gpt-4o-mini'
         const savedModel = localStorage.getItem('selectedModel');
-        return savedModel !== null ? savedModel : 'gpt-4o-mini';
+        console.log('Loading saved model from localStorage:', savedModel);
+        return savedModel || 'gpt-4o-mini';
     });
 
     // Initialize API keys state
@@ -310,6 +311,8 @@ const Chat = () => {
 
     // Update model selection
     const handleModelChange = async (model: string) => {
+        console.log('handleModelChange called with model:', model);
+        
         // Get the provider from the selected model
         const provider = models.find(m => m.id === model)?.provider.toLowerCase();
 
@@ -336,6 +339,8 @@ const Chat = () => {
 
                 // Update the model immediately to provide faster feedback
                 setSelectedModel(model);
+                localStorage.setItem('selectedModel', model);
+                console.log('Saved OpenAI model to localStorage:', model);
 
                 // Test API key in background
                 const testModel = openai('gpt-3.5-turbo');
@@ -346,13 +351,19 @@ const Chat = () => {
             } else {
                 // For other providers, just update the model
                 setSelectedModel(model);
+                localStorage.setItem('selectedModel', model);
+                console.log('Saved non-OpenAI model to localStorage:', model);
             }
 
-            toast.success(`Switched to ${models.find(m => m.id === model)?.name}`);
+            // Get the model name for the success message
+            const modelName = models.find(m => m.id === model)?.name;
+            toast.success(`Switched to ${modelName}`);
         } catch (error: any) {
             console.error('API key test failed:', error);
             // Revert to previous model if there's an error
             setSelectedModel(selectedModel);
+            localStorage.setItem('selectedModel', selectedModel);
+            console.log('Reverted model in localStorage:', selectedModel);
 
             if (error?.message?.includes('401')) {
                 toast.error('Invalid API key. Please check your API key in settings.');
@@ -361,6 +372,20 @@ const Chat = () => {
             }
         }
     };
+
+    // Create a memoized context value to prevent unnecessary re-renders
+    const contextValue = React.useMemo(() => ({
+        selectedModel,
+        setSelectedModel: handleModelChange
+    }), [selectedModel]);
+
+    // Add effect to sync localStorage with selectedModel
+    useEffect(() => {
+        const currentSavedModel = localStorage.getItem('selectedModel');
+        if (currentSavedModel && currentSavedModel !== selectedModel) {
+            setSelectedModel(currentSavedModel);
+        }
+    }, []);
 
     const toggleSidebar = () => {
         const newState = !sidebarVisible;
@@ -376,7 +401,7 @@ const Chat = () => {
     };
 
     return (
-        <ModelContext.Provider value={{ selectedModel, setSelectedModel: handleModelChange }}>
+        <ModelContext.Provider value={contextValue}>
             <WpAssistantRuntimeProvider>
                 <div className="flex h-[89vh] m-0 p-0 overflow-hidden">
                     {/* ThreadList sidebar */}
