@@ -4,6 +4,7 @@ import {
     CompositeAttachmentAdapter,
     SimpleImageAttachmentAdapter,
     SimpleTextAttachmentAdapter,
+    tool
 } from "@assistant-ui/react";
 import { ThreadList } from "@/components/thread-list";
 import { Thread } from "@/components/thread";
@@ -33,6 +34,7 @@ import { tools } from "@/admin/tools";
 import { toolsUI } from "@/admin/tools";
 
 import { models } from "@/components/models";
+import { z } from "zod";
 
 interface ModelContextType {
     selectedModel: string;
@@ -173,14 +175,14 @@ function WpAssistantRuntimeProvider({ children }: { children: ReactNode }) {
             // }));
 
             // messages = messages.filter(message => message.content[0].type !== "tool-call");
-
+            
             try {
                 const config = {
                     model: model,
                     messages: messages,
-                    // tools: tools,
+                    tools: tools,
                     // system: 'You are a helpful assistant that can answer questions and help with tasks.',
-                    // toolChoice: "auto",
+                    toolChoice: "auto",
                     signal: abortSignal
                 };
 
@@ -198,6 +200,8 @@ function WpAssistantRuntimeProvider({ children }: { children: ReactNode }) {
                     };
                 }
 
+                console.log('messages', messages);
+
                 // Handle tool calls after the text generation is complete
                 const toolCalls = await result.toolCalls;
 
@@ -205,10 +209,11 @@ function WpAssistantRuntimeProvider({ children }: { children: ReactNode }) {
                 if (toolCalls && toolCalls.length > 0) {
                     for (const toolCall of toolCalls) {
                         if (toolCall.type === "tool-call") {
+                            console.log(toolCall)
                             yield {
                                 content: [{
                                     type: "tool-call",
-                                    toolName: tools[parseInt(toolCall.toolName)].name,
+                                    toolName: toolCall.toolName,
                                     toolCallId: toolCall.toolCallId,
                                     args: toolCall.args,
                                 }],
