@@ -4,7 +4,6 @@ import {
     CompositeAttachmentAdapter,
     SimpleImageAttachmentAdapter,
     SimpleTextAttachmentAdapter,
-    tool
 } from "@assistant-ui/react";
 import { ThreadList } from "@/components/thread-list";
 import { Thread } from "@/components/thread";
@@ -20,13 +19,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 import { streamText } from "ai";
-import { createOpenAI } from '@ai-sdk/openai';
-import { createAnthropic } from '@ai-sdk/anthropic';
-import { createGoogleGenerativeAI } from '@ai-sdk/google';
-import { createGroq } from '@ai-sdk/groq';
-import { createOpenRouter } from '@openrouter/ai-sdk-provider';
 
-import React, { useState, createContext, useContext, ReactNode, useEffect } from "react";
+import React, { useState, createContext, ReactNode, useEffect } from "react";
 import { toast, Toaster } from "sonner";
 import type { ChatModelAdapter } from "@assistant-ui/react";
 import { tools } from "@/admin/tools";
@@ -34,7 +28,7 @@ import { tools } from "@/admin/tools";
 import { toolsUI } from "@/admin/tools";
 
 import { models } from "@/components/models";
-import { z } from "zod";
+
 import { useModelInstance } from "@/contexts/ModelInstanceContext";
 
 interface ModelContextType {
