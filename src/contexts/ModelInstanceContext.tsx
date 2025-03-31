@@ -113,22 +113,20 @@ export function ModelInstanceProvider({ children }: { children: ReactNode }) {
         }
 
         try {
-            if (provider === 'openai') {
-                const openai = createOpenAI({
-                    apiKey: apiKeys.openai
-                });
+            // Test the API connection by making a simple request
+            const baseUrl = window.wpAiAssistant.apiUrl.replace(/\/$/, '');
+            const response = await fetch(`${baseUrl}/wp-ai-assistant/v1/settings/get`, {
+                headers: {
+                    'X-WP-Nonce': window.wpAiAssistant.nonce
+                }
+            });
 
-                setSelectedModel(model);
-                localStorage.setItem('selectedModel', model);
-
-                const testModel = openai('gpt-3.5-turbo');
-                await testModel.chat.completions.create({
-                    messages: [{ role: 'user', content: 'test' }],
-                });
-            } else {
-                setSelectedModel(model);
-                localStorage.setItem('selectedModel', model);
+            if (!response.ok) {
+                throw new Error('Failed to connect to the API');
             }
+
+            setSelectedModel(model);
+            localStorage.setItem('selectedModel', model);
 
             const modelName = models.find(m => m.id === model)?.name;
             toast.success(`Switched to ${modelName}`);
