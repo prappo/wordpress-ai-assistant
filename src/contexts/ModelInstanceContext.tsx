@@ -6,6 +6,7 @@ import { createGroq } from '@ai-sdk/groq';
 import { createOpenRouter } from '@openrouter/ai-sdk-provider';
 import { models } from '@/components/models';
 import { toast } from 'sonner';
+import { generateText as generateTextAI , streamText as streamTextAI } from 'ai';
 
 interface ModelInstanceContextType {
     getModelInstance: () => any;
@@ -13,6 +14,8 @@ interface ModelInstanceContextType {
     setApiKeys: (keys: Record<string, string>) => void;
     selectedModel: string;
     setSelectedModel: (model: string) => void;
+    generateText: (query: string, prompt: string) => Promise<string>;
+    streamText: (query: string, prompt: string) => Promise<string>;
 }
 
 const ModelInstanceContext = createContext<ModelInstanceContextType>({
@@ -20,7 +23,9 @@ const ModelInstanceContext = createContext<ModelInstanceContextType>({
     apiKeys: {},
     setApiKeys: () => {},
     selectedModel: 'gpt-4o-mini',
-    setSelectedModel: () => {}
+    setSelectedModel: () => {},
+    generateText: async () => '',
+    streamText: async () => ''
 });
 
 export function ModelInstanceProvider({ children }: { children: ReactNode }) {
@@ -143,12 +148,53 @@ export function ModelInstanceProvider({ children }: { children: ReactNode }) {
         }
     };
 
+    const generateText = async (query: string, prompt: string): Promise<string> => {
+        try {
+            const model = getModelInstance();
+            if (!model) {
+                throw new Error('No model instance available');
+            }
+
+            const result = await generateTextAI({
+                model,
+                system: prompt,
+                messages: [{ role: 'user', content: query }]
+            });
+
+            return result.text;
+        } catch (error) {
+            console.error('Error generating text:', error);
+            throw error;
+        }
+    };
+
+    const streamText = async (query: string, prompt: string): Promise<string> => {
+        try {
+            const model = getModelInstance();
+            if (!model) {
+                throw new Error('No model instance available');
+            }
+
+            const result = await streamTextAI({
+                model,
+                prompt: query
+            });
+
+            return result.text;
+        } catch (error) {
+            console.error('Error generating text:', error);
+            throw error;
+        }
+    };
+
     const value = {
         getModelInstance,
         apiKeys,
         setApiKeys,
         selectedModel,
-        setSelectedModel: handleModelChange
+        setSelectedModel: handleModelChange,
+        generateText,
+        streamText
     };
 
     return (
